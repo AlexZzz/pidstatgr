@@ -5,6 +5,8 @@ import pandas as pd
 import argparse
 import plotly.express as px
 
+# Plots `pidstat -t -p PID 1` output
+
 def get_greater(x):
     return x.gt(0.00).sum()
 
