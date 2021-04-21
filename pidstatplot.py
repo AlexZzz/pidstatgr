@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import argparse
 import plotly.express as px
+import plotly.graph_objects as go
 import fileinput
 import re
 
@@ -55,6 +56,13 @@ def work(args):
 
     # Plotting summarized CPU utilization for a processes
     fig = px.line(dfsum, x='Time', y='%CPU', color='Command')
+    fig.show()
+
+    fig = go.Figure(data=go.Heatmap(
+                    z=df['%CPU'],y=df['TID']+' '+df['Command'],x=df['Time'],
+                    hoverongaps=False),
+                    layout=go.Layout(yaxis=dict(automargin=False)
+                    ))
     fig.show()
 
 def main():
