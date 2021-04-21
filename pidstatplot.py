@@ -4,18 +4,33 @@ import os
 import pandas as pd
 import argparse
 import plotly.express as px
+import fileinput
+import re
 
+# WARNING
+# This script changes the file a bit
+# but saves the original one with .bak suffix
+#
 # Plots `pidstat -t -p PID 1` output
+# or `pidstat -t 1` output
 
 def get_greater(x):
     return x.gt(0.00).sum()
 
+def cleanup_file(args):
+    header_first = False
+    with fileinput.FileInput(args.input, inplace=1, backup='.bak') as f:
+        for line in f:
+            if re.match(r'[0-9][0-9]:[0-9][0-9]:[0-9][0-9].*', line):
+                if not re.match(r'[0-9][0-9]:[0-9][0-9]:[0-9][0-9].+UID.+Command', line):
+                    print(line, end='')
+                elif not header_first:
+                    header_first = True
+                    print(line, end='')
+
 def work(args):
     with open(args.input) as f:
-        # Skip first two lines of header
-        for _ in range(2):
-            next(f)
-        # Next line is a table header
+        # First line is a table header
         header = f.readline().split()
         # But the first column has time instead of the word 'Time'
         header[0] = 'Time'
@@ -46,6 +61,7 @@ def main():
     parser = argparse.ArgumentParser(description="Plot pidstat results")
     parser.add_argument('--input','-i',type=str,help="Input file")
     args = parser.parse_args()
+    cleanup_file(args)
     work(args)
     
 if __name__=='__main__':
