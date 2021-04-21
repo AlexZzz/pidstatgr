@@ -19,15 +19,25 @@ def work(args):
         header[0] = 'Time'
         df = pd.read_csv(f,names=header,delim_whitespace=True)
     
+    # Add new datframe for the whole process stats
+    dfsum = df[df.TID == '-']
     # Skip main summarized info for a process
     df = df[df.TID != '-']
 
+    # Here we count number of active threads during the time interval
     df_active_cpu_count = df.groupby('Time').agg({'%CPU': get_greater})
-    df_active_cpu_count = df_active_cpu_count.rename(columns={'%CPU':'Active CPU Count'})
-    fig = px.line(df_active_cpu_count, y='Active CPU Count')
+    df_active_cpu_count = df_active_cpu_count.rename(columns={'%CPU':'Active Threads Count'})
+
+    # Plotting number of active threads
+    fig = px.line(df_active_cpu_count, y='Active Threads Count')
     fig.show()
 
+    # Plotting CPU utilization
     fig = px.line(df, x='Time', y='%CPU', color='TID')
+    fig.show()
+
+    # Plotting summarized CPU utilization for a processes
+    fig = px.line(dfsum, x='Time', y='%CPU', color='Command')
     fig.show()
 
 def main():
