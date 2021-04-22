@@ -46,8 +46,16 @@ def work(args):
     df_active_cpu_count = df.groupby('Time').agg({'%CPU': get_greater})
     df_active_cpu_count = df_active_cpu_count.rename(columns={'%CPU':'Active Threads Count'})
 
+    # Number of delayed threads during the time interval
+    df_wait_threads_count = df.groupby('Time').agg({'%wait': get_greater})
+    df_wait_threads_count = df_wait_threads_count.rename(columns={'%wait':'Delayed Threads Count'})
+
     # Plotting number of active threads
     fig = px.line(df_active_cpu_count, y='Active Threads Count')
+    fig.show()
+
+    # Plotting number of delayed threads
+    fig = px.line(df_wait_threads_count, y='Delayed Threads Count')
     fig.show()
 
     # Plotting CPU utilization
@@ -58,8 +66,17 @@ def work(args):
     fig = px.line(dfsum, x='Time', y='%CPU', color='Command')
     fig.show()
 
+    # Thread CPU utilization heatmap
     fig = go.Figure(data=go.Heatmap(
                     z=df['%CPU'],y=df['TID']+' '+df['Command'],x=df['Time'],
+                    hoverongaps=False),
+                    layout=go.Layout(yaxis=dict(automargin=False)
+                    ))
+    fig.show()
+
+    # Thread runqueue delay heatmap
+    fig = go.Figure(data=go.Heatmap(
+                    z=df['%wait'],y=df['TID']+' '+df['Command'],x=df['Time'],
                     hoverongaps=False),
                     layout=go.Layout(yaxis=dict(automargin=False)
                     ))
