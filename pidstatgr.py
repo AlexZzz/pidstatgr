@@ -70,7 +70,8 @@ def work(args):
     fig = go.Figure(data=go.Heatmap(
                     z=df['%CPU'],y=df['TID']+' '+df['Command'],x=df['Time'],
                     hoverongaps=False),
-                    layout=go.Layout(yaxis=dict(automargin=False)
+                    layout=go.Layout(yaxis=dict(automargin=False),
+                    title="On-CPU time of a threads (%CPU)."
                     ))
     fig.show()
 
@@ -78,7 +79,8 @@ def work(args):
     fig = go.Figure(data=go.Heatmap(
                     z=df['%wait'],y=df['TID']+' '+df['Command'],x=df['Time'],
                     hoverongaps=False),
-                    layout=go.Layout(yaxis=dict(automargin=False)
+                    layout=go.Layout(yaxis=dict(automargin=False),
+                    title="Delay time of a threads (%wait)."
                     ))
     fig.show()
 
